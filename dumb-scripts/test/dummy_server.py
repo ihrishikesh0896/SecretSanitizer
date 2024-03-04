@@ -29,6 +29,8 @@ def connect_to_service():
     print(f"Authenticating with OAuth token: {oauth_token}")
     # ... more code
 
+snyk_token = 'a1v2vsvsvsvsvsvs'
+
 # Main function to run the dummy function
 if __name__ == "__main__":
     connect_to_service()
