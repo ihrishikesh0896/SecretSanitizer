@@ -1,10 +1,10 @@
-import re
-import uuid
-import requests
-import git
-import sys
 import os
+import re
+import sys
+import uuid
 from pathlib import Path
+
+import git
 
 # Patterns to identify emails, passwords, and API keys
 EMAIL_REGEX = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
@@ -20,6 +20,7 @@ SESSION_IDS_REGEX = r"(session_id|sid|sessionid|token|auth_token)\s*=\s*['\"][A-
 # Placeholder format
 PLACEHOLDER_FORMAT = "SECRET_PLACEHOLDER_{uuid}"
 output_mapping_file = 'secrets_mapping.txt'
+
 
 # scan and replace wrt regex patterns
 def scan_and_replace(file_path, output_mapping_file):
@@ -50,7 +51,7 @@ def scan_and_replace(file_path, output_mapping_file):
             placeholder = PLACEHOLDER_FORMAT.format(uuid=uuid.uuid4().hex)
             content = content.replace(match.group(1), placeholder)
             mappings.append((match.group(1), placeholder))
-        
+
         # Replace PRIVATE_KEY_PEM
         for match in re.finditer(PRIVATE_KEY_PEM, content):
             placeholder = PLACEHOLDER_FORMAT.format(uuid=uuid.uuid4().hex)
@@ -62,7 +63,7 @@ def scan_and_replace(file_path, output_mapping_file):
             placeholder = PLACEHOLDER_FORMAT.format(uuid=uuid.uuid4().hex)
             content = content.replace(match.group(1), placeholder)
             mappings.append((match.group(1), placeholder))
-        
+
         # Replace PRIVATE_KEY_GENERIC_REGEX
         for match in re.finditer(PRIVATE_KEY_GENERIC_REGEX, content):
             placeholder = PLACEHOLDER_FORMAT.format(uuid=uuid.uuid4().hex)
@@ -92,6 +93,7 @@ def scan_and_replace(file_path, output_mapping_file):
             mapping_file.write(f"{original} -> {placeholder}\n")
     return mappings
 
+
 def process_directory(directory_path, output_mapping_file):
     for path in directory_path.iterdir():
         if path.is_dir() and path.name.startswith('.'):
@@ -102,8 +104,10 @@ def process_directory(directory_path, output_mapping_file):
         elif path.is_dir():
             process_directory(path, output_mapping_file)  # Recursive call to process subdirectories
 
+
 workspace_dir = '../../WORKSPACE'
 url = []
+
 
 class GitPackage:
     def __init__(self, url=None):
@@ -120,7 +124,7 @@ class GitPackage:
         if repo_path.exists():
             print(f"Repository already exists at {repo_path}", file=sys.stderr)
         return git.Repo.clone_from(url, repo_path)
-    
+
     def commit_changes(repo_path, branch_name):
         repo = git.Repo(repo_path)
         repo.git.checkout('HEAD', b=branch_name)
@@ -135,6 +139,7 @@ def hex8_4_4_4_12():
     Returns a regex pattern for a generic UUID.
     """
     return r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+
 
 def generate_semi_generic_regex(keywords, pattern, case_sensitive=False):
     """
@@ -156,13 +161,15 @@ def generate_semi_generic_regex(keywords, pattern, case_sensitive=False):
     else:
         return re.compile(regex_str)
 
+
 keywords = [
-        "snyk_token",
-        "snyk_key",
-        "snyk_api_token",
-        "snyk_api_key",
-        "snyk_oauth_token",
-    ]
+    "snyk_token",
+    "snyk_key",
+    "snyk_api_token",
+    "snyk_api_key",
+    "snyk_oauth_token",
+]
+
 
 def scan_directory_for_snyk_tokens(directory_path, regex):
     for root, dirs, files in os.walk(directory_path):
@@ -177,14 +184,16 @@ def scan_directory_for_snyk_tokens(directory_path, regex):
             except (UnicodeDecodeError, PermissionError):
                 print(f"Could not read file {file_path}")
 
+
 def main(urls):
     source_dir = Path(workspace_dir)
-    
+
     # Iterate over files in the directory
     GitPackage(urls)
     print("Secrets replacement completed.")
 
+
 if __name__ == "__main__":
     main()
     regex = generate_semi_generic_regex(keywords, hex8_4_4_4_12())
-    scan_directory_for_snyk_tokens(Path(workspace_dir),regex)
+    scan_directory_for_snyk_tokens(Path(workspace_dir), regex)

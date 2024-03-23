@@ -1,5 +1,28 @@
-import re
 import os
+import re
+import uuid
+
+
+def generate_placeholder():
+    return f"uuid_{uuid.uuid4().hex}"
+
+
+def replace_secrets(file_path, content, rules):
+    updated_content = content
+    for rule in rules:
+        regex = re.compile(rule['regex'], re.MULTILINE)
+        for match in regex.finditer(content):
+            placeholder = generate_placeholder()
+            secret_value = match.group(1)
+            updated_content = updated_content.replace(secret_value, placeholder)
+
+            # Calculate line number outside of the f-string
+            line_number = content.count('\n', 0, match.start()) + 1
+            print(f"Match found for rule | {rule['id']} in {file_path}: {match.group(0)} on line {line_number}")
+            print(f"Replaced secret in {file_path} on line {line_number} with {match.group(0)}")
+
+    return updated_content
+
 
 def apply_rules_to_repo(repo_path, rules):
     for root, dirs, files in os.walk(repo_path, topdown=True):
@@ -11,18 +34,19 @@ def apply_rules_to_repo(repo_path, rules):
             try:
                 with open(file_path, 'r', encoding='utf-8') as file:
                     content = file.read()
-                    for rule in rules:
-                        regex = re.compile(rule['regex'], re.MULTILINE)
-                        for match in regex.finditer(content):
-                            # Calculate line number
-                            line_start = content.rfind('\n', 0, match.start()) + 1
-                            line_end = content.find('\n', match.start(), -1)
-                            if line_end == -1:  # If this is the last line in the file
-                                line_end = len(content)
-                            line_number = content.count('\n', 0, match.start()) + 1
-                            print(f"Match found for rule | {rule['id']} in {file_path}: {match.group(0)} on line {line_number}")
+
+                updated_content = replace_secrets(file_path, content, rules)
+
+                if content != updated_content:
+                    with open(file_path, 'w', encoding='utf-8') as file:
+                        file.write(updated_content)
+
             except (UnicodeDecodeError, PermissionError) as e:
                 print(f"Could not read file {file_path}: {e}")
 
+
 if __name__ == '__main__':
+    # Placeholder for repo_path and rules, they need to be defined before running this script
+    repo_path = 'path_to_your_repository'
+    rules = [{'regex': r'sensitive_regex_pattern', 'id': 'example_rule_id'}]
     apply_rules_to_repo(repo_path, rules)

@@ -1,15 +1,13 @@
-import re
-import uuid
-from pathlib import Path
-import git
 import argparse
-import logging, os
-from src.apply_rules import *
-import tomlkit
-import re
-import sys
+import logging
 import shutil
+import sys
+from pathlib import Path
 
+import git
+import tomlkit
+
+from src.apply_rules import *
 
 # Configuration for secret patterns and their placeholders
 SECRET_PATTERNS = {
@@ -27,7 +25,8 @@ SECRET_PATTERNS = {
 PLACEHOLDER_FORMAT = "SECRET_PLACEHOLDER_{uuid}"
 OUTPUT_MAPPING_FILE = 'secrets_mapping.txt'
 
-class SecretScanner_inhouse:
+
+class SecretScannerInhouse:
     def __init__(self, patterns, placeholder_format, output_mapping_file):
         self.patterns = patterns
         self.placeholder_format = placeholder_format
@@ -63,13 +62,13 @@ class SecretScanner_inhouse:
             if path.is_file():
                 scanner.scan_and_replace(path)
             elif path.is_dir():
-                SecretScanner_inhouse.process_directory(path, scanner)
+                SecretScannerInhouse.process_directory(path, scanner)
+
 
 class GitPackage:
     def __init__(self, url, workspace_dir):
         self.url = url
         self.repo_name = url.split('/')[-1].replace('.git', '')
-        self.branch_name = 'secrets_removed_' + self.repo_name + '_2'
         self.repo_path = Path(workspace_dir) / self.repo_name
         if os.path.exists(self.repo_path):
             shutil.rmtree(self.repo_path)
@@ -77,30 +76,46 @@ class GitPackage:
     def clone_repo(self):
         if self.repo_path.exists():
             logging.error(f"Repository already exists at {self.repo_path}")
-            # shutil.rmtree(self.repo_path)
             return None
         return git.Repo.clone_from(self.url, self.repo_path)
 
+    def get_next_branch_name(self, base_name='test_fixed_creds'):
+        repo = git.Repo(self.repo_path)
+        branches = [branch.name for branch in repo.branches]
+        branch_numbers = [int(name.split('-')[-1]) for name in branches if
+                          name.startswith(base_name) and name.split('-')[-1].isdigit()]
+        next_number = max(branch_numbers + [0]) + 1
+        return f"{base_name}-{next_number}"
+
     def commit_changes(self):
         repo = git.Repo(self.repo_path)
-        repo.git.checkout('HEAD', b=self.branch_name)
-        repo.git.add(A=True)
-        repo.git.commit(m='Replace secrets with placeholder values')
-        repo.git.push('origin', self.branch_name)
+        # Check if there are changes to commit
+        if repo.is_dirty(untracked_files=True):
+            new_branch_name = self.get_next_branch_name()
+            repo.git.checkout('HEAD', b=new_branch_name)
+            repo.git.add(A=True)  # Stages all changes, including untracked files
+            repo.git.commit(m='Replace secrets with placeholder values')
+            repo.git.push('origin', new_branch_name)
+        else:
+            logging.info("No changes to commit, working tree clean.")
+
 
 def main(urls, workspace_dir):
     logging.basicConfig(level=logging.INFO)
+    print(urls)
     for url in urls:
         git_package = GitPackage(url, workspace_dir)
         git_package.clone_repo()
         rules = load_rules_from_config(config_file)
         apply_rules_to_repo(workspace_dir, rules)
-        scanner = SecretScanner_inhouse(SECRET_PATTERNS, PLACEHOLDER_FORMAT, OUTPUT_MAPPING_FILE)
-        SecretScanner_inhouse.process_directory(git_package.repo_path, scanner)
+        # scanner = SecretScannerInhouse(SECRET_PATTERNS, PLACEHOLDER_FORMAT, OUTPUT_MAPPING_FILE)
+        # SecretScannerInhouse.process_directory(git_package.repo_path, scanner)
         git_package.commit_changes()
         logging.info("Secrets replacement and commit completed for repository: " + url)
 
+
 config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
+
 
 def load_rules_from_config(config_file):
     try:
@@ -110,19 +125,22 @@ def load_rules_from_config(config_file):
     except Exception as e:
         print(f"Error reading or parsing config file: {e}")
         return []
-    
+
+
 def display_usage():
-    print("Usage: python test.py -urls <git url> -workspace-dir </path/to/repository>")
+    print("Usage: python main.py -urls <git url> -workspace-dir </path/to/repository>")
     print("-workspace-dir: Path to the repository where rules will be applied.")
     print("-urls : Input Urls not supplied")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:  # The first argument is the script name, so we expect 3 in total
         display_usage()
         sys.exit(1)
     parser = argparse.ArgumentParser(description="Scan and replace secrets in git repositories.")
-    parser.add_argument('-urls', nargs='+', help='URL(s) of the git repositories to process.')
-    parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE', help='Directory where repositories will be cloned and processed.')
+    parser.add_argument('-urls', nargs='+',  help='URL(s) of the git repositories to process.')
+    parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE',
+                        help='Directory where repositories will be cloned and processed.')
     args = parser.parse_args()
     urls = args.urls
     workspace_dir = args.workspace_dir

@@ -1,5 +1,6 @@
 import os
-import re, logging
+import re
+
 
 def apply_rules_to_repo(repo_path, rules):
     for root, dirs, files in os.walk(repo_path, topdown=True):
