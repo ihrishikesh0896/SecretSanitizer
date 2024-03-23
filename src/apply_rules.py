@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import uuid
@@ -18,8 +19,8 @@ def replace_secrets(file_path, content, rules):
 
             # Calculate line number outside of the f-string
             line_number = content.count('\n', 0, match.start()) + 1
-            print(f"Match found for rule | {rule['id']} in {file_path}: {match.group(0)} on line {line_number}")
-            print(f"Replaced secret in {file_path} on line {line_number} with {match.group(0)}")
+            logging.critical(f"Match found for rule | {rule['id']} in {file_path}: {match.group(0)} on line {line_number}")
+            logging.critical(f"Replaced secret in {file_path} on line {line_number} with {match.group(0)}")
 
     return updated_content
 

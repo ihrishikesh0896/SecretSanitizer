@@ -112,7 +112,7 @@ def main(urls, workspace_dir):
         # SecretScannerInhouse.process_directory(git_package.repo_path, scanner)
         git_package.commit_changes()
         logging.info("Secrets replacement and commit completed for repository: " + url)
-
+        logging.info("---------------------------------------------------------------")
 
 config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
         display_usage()
         sys.exit(1)
     parser = argparse.ArgumentParser(description="Scan and replace secrets in git repositories.")
-    parser.add_argument('-urls', type=lambda s: s.split(','),  help='URL(s) of the git repositories to process.')
+    parser.add_argument('-urls', type=lambda s: s.split(','), help='URL(s) of the git repositories to process.')
     parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE',
                         help='Directory where repositories will be cloned and processed.')
     args = parser.parse_args()
