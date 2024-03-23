@@ -138,7 +138,7 @@ if __name__ == "__main__":
         display_usage()
         sys.exit(1)
     parser = argparse.ArgumentParser(description="Scan and replace secrets in git repositories.")
-    parser.add_argument('-urls', nargs='+',  help='URL(s) of the git repositories to process.')
+    parser.add_argument('-urls', type=lambda s: s.split(','),  help='URL(s) of the git repositories to process.')
     parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE',
                         help='Directory where repositories will be cloned and processed.')
     args = parser.parse_args()
