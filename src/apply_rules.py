@@ -15,12 +15,11 @@ def replace_secrets(file_path, content, rules):
         for match in regex.finditer(content):
             placeholder = generate_placeholder()
             secret_value = match.group(1)
-            updated_content = updated_content.replace(secret_value, placeholder)
-
-            # Calculate line number outside of the f-string
             line_number = content.count('\n', 0, match.start()) + 1
-            logging.critical(f"Match found for rule | {rule['id']} in {file_path}: {match.group(0)} on line {line_number}")
-            logging.critical(f"Replaced secret in {file_path} on line {line_number} with {match.group(0)}")
+            logging.critical(f"Match found for rule | {rule['id']} in {file_path}:: {match.group(0)} on line {line_number} ::")
+            updated_content = updated_content.replace(secret_value, placeholder)
+            # Calculate line number outside of the f-string
+            logging.critical(f"Replaced secret in {file_path} on line {line_number} secret = {secret_value} with {placeholder}")
 
     return updated_content
 

@@ -1,12 +1,9 @@
 import argparse
-import logging
 import shutil
 import sys
 from pathlib import Path
-
 import git
 import tomlkit
-
 from src.apply_rules import *
 
 # Configuration for secret patterns and their placeholders
@@ -92,6 +89,7 @@ class GitPackage:
         # Check if there are changes to commit
         if repo.is_dirty(untracked_files=True):
             new_branch_name = self.get_next_branch_name()
+            print(new_branch_name)
             repo.git.checkout('HEAD', b=new_branch_name)
             repo.git.add(A=True)  # Stages all changes, including untracked files
             repo.git.commit(m='Replace secrets with placeholder values')
@@ -113,6 +111,7 @@ def main(urls, workspace_dir):
         git_package.commit_changes()
         logging.info("Secrets replacement and commit completed for repository: " + url)
         logging.info("---------------------------------------------------------------")
+
 
 config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
 
