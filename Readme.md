@@ -1,8 +1,8 @@
 # SecretSanitizer
 
-Secret Pusher is a tool designed to identify and replace sensitive information, such as passwords, API keys, and other
+SecretSanitizer is a tool designed to identify and replace sensitive information, such as passwords, API keys, and other
 secrets, in your codebase with placeholders. This helps in preventing the accidental push of sensitive data into version
-control systems. Secret Pusher scans your repositories, replaces secrets with unique placeholders, and logs the changes
+control systems. SecretSanitizer scans your repositories, replaces secrets with unique placeholders, and logs the changes
 for audit and reversal purposes.
 
 ## Features
@@ -16,11 +16,11 @@ for audit and reversal purposes.
 
 ## Installation
 
-To use Secret Pusher, you need to have Python installed on your system. Clone the repository from GitHub and install the
+To use SecretSanitizer, you need to have Python installed on your system. Clone the repository from GitHub and install the
 required dependencies:
 
 ```bash
-git clone https://github.com/yourusername/secret-pusher.git
+git clone https://github.com/ihrishikesh0896/SecretSanitizer.git
 cd secret-pusher
 pip install -r requirements.txt
 ```
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 Navigate to the Secret Pusher directory and run the script with the necessary arguments:
 
 ```bash
-python secret_pusher.py -urls [URLs of the git repositories] -workspace-dir [Path to the directory where repositories will be cloned]
+python main.py -urls [URLs of the git repositories] -workspace-dir [Path to the directory where repositories will be cloned]
 ```
 
 ### Arguments
@@ -41,7 +41,7 @@ python secret_pusher.py -urls [URLs of the git repositories] -workspace-dir [Pat
 ### Example
 
 ```bash
-python secret_pusher.py -urls https://github.com/user/repo1.git,https://github.com/user/repo2.git -workspace-dir /path/to/workspace
+python main.py -urls https://github.com/user/repo1.git,https://github.com/user/repo2.git -workspace-dir /path/to/workspace
 ```
 
 ## Configuration
@@ -53,8 +53,12 @@ Example configuration:
 
 ```toml
 [[rules]]
-id = "API_KEY"
-regex = '''(apikey\s*=\s*['"])([^'"]+)(['"])'''
+id = "API_TOKEN"
+description = "Detected an API token"
+regex = '''(apitoken\s*=\s*['"])([^'"]+)(['"])'''
+keywords = [
+    "api","token","apitoken",
+]
 ```
 
 ## Contributing
@@ -62,11 +66,15 @@ regex = '''(apikey\s*=\s*['"])([^'"]+)(['"])'''
 We welcome contributions to Secret Pusher! If you have suggestions for improvements or bug fixes, please open an issue
 or submit a pull request.
 
+## Acknowledgments
+
+- [regex.toml](https://github.com/ihrishikesh0896/SecretSanitizer/blob/main/configs/regex.toml) of this project are adapted from [gitleaks](https://github.com/zricethezav/gitleaks/blob/master/CONTRIBUTING.md) by [zricethezav](https://github.com/zricethezav). The code is used under [MIT License](LICENSE).
+
 ## License
 
-Secret Pusher is released under the [MIT License](LICENSE).
+SecretSanitizer is released under the [MIT License](LICENSE).
 
 ---
 
 For more information, please visit
-the [Secret Pusher GitHub repository](https://github.com/ihrishikesh0896/secret-pusher).
+the [SecretSanitizer Repository](https://github.com/ihrishikesh0896/SecretSanitizer).

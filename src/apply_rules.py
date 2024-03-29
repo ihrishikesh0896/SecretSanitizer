@@ -1,8 +1,8 @@
+import csv
 import logging
 import os
 import re
 import uuid
-import csv
 
 
 def generate_placeholder():

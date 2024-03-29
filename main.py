@@ -2,8 +2,10 @@ import argparse
 import shutil
 import sys
 from pathlib import Path
+
 import git
 import tomlkit
+
 from src.apply_rules import *
 
 # Configuration for secret patterns and their placeholders
