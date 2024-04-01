@@ -72,6 +72,9 @@ class GitPackage:
         if os.path.exists(self.repo_path):
             shutil.rmtree(self.repo_path)
 
+    def repository_path(self):
+        return self.repo_path
+
     def clone_repo(self):
         if self.repo_path.exists():
             logging.error(f"Repository already exists at {self.repo_path}")
@@ -102,12 +105,12 @@ class GitPackage:
 
 def main(urls, workspace_dir):
     logging.basicConfig(level=logging.INFO)
-    print(urls)
     for url in urls:
         git_package = GitPackage(url, workspace_dir)
         git_package.clone_repo()
+        repository_path = git_package.repository_path()
         rules = load_rules_from_config(config_file)
-        apply_rules_to_repo(workspace_dir, rules)
+        apply_rules_to_repo(workspace_dir, rules, repository_path)
         # scanner = SecretScannerInhouse(SECRET_PATTERNS, PLACEHOLDER_FORMAT, OUTPUT_MAPPING_FILE)
         # SecretScannerInhouse.process_directory(git_package.repo_path, scanner)
         git_package.commit_changes()
@@ -139,12 +142,10 @@ if __name__ == "__main__":
         display_usage()
         sys.exit(1)
     parser = argparse.ArgumentParser(description="Scan and replace secrets in git repositories.")
-    parser.add_argument('-urls', type=lambda s: s.split(','), help='URL(s) of the git repositories to process.')
+    parser.add_argument('-urls', type=lambda s: s.split(','), help='URL(s) of the git repositories to process- comma-separated values [ex: url1,url2,...]')
     parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE',
                         help='Directory where repositories will be cloned and processed.')
     args = parser.parse_args()
     urls = args.urls
     workspace_dir = args.workspace_dir
     main(urls, workspace_dir)
-
-# https://github.com/ihrishikesh0896/secret_store.git

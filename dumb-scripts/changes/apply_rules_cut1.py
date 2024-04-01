@@ -8,7 +8,7 @@ def apply_rules_to_repo(repo_path, rules):
     for root, dirs, files in os.walk(repo_path, topdown=True):
         dirs[:] = [d for d in dirs if not d.startswith('.')]
         for file_name in files:
-            if file_name.startswith('.'):
+            if file_name.startswith('.') or file_name.endswith('.ipynb'):
                 continue
             file_path = os.path.join(root, file_name)
             try:
@@ -17,6 +17,7 @@ def apply_rules_to_repo(repo_path, rules):
                     for rule in rules:
                         regex = re.compile(rule['regex'], re.MULTILINE)
                         for match in regex.finditer(content):
+                            print(match)
                             # Calculate line number
                             line_start = content.rfind('\n', 0, match.start()) + 1
                             line_end = content.find('\n', match.start(), -1)
@@ -44,5 +45,5 @@ def load_rules_from_config(config_file):
 config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
 
 rules = load_rules_from_config(config_file)
-repo_path = '/Users/hrishikesh/Desktop/github_projects/dummy-java-project'
+repo_path = '/Users/hrishikesh/Desktop/github_projects/WORKSPACE/crawler.ai'
 apply_rules_to_repo(repo_path, rules)

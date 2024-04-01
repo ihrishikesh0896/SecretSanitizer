@@ -2,7 +2,8 @@
 
 SecretSanitizer is a tool designed to identify and replace sensitive information, such as passwords, API keys, and other
 secrets, in your codebase with placeholders. This helps in preventing the accidental push of sensitive data into version
-control systems. SecretSanitizer scans your repositories, replaces secrets with unique placeholders, and logs the changes
+control systems. SecretSanitizer scans your repositories, replaces secrets with unique placeholders, and logs the
+changes
 for audit and reversal purposes.
 
 ## Features
@@ -16,7 +17,8 @@ for audit and reversal purposes.
 
 ## Installation
 
-To use SecretSanitizer, you need to have Python installed on your system. Clone the repository from GitHub and install the
+To use SecretSanitizer, you need to have Python installed on your system. Clone the repository from GitHub and install
+the
 required dependencies:
 
 ```bash
@@ -57,7 +59,7 @@ id = "API_TOKEN"
 description = "Detected an API token"
 regex = '''(apitoken\s*=\s*['"])([^'"]+)(['"])'''
 keywords = [
-    "api","token","apitoken",
+    "api", "token", "apitoken",
 ]
 ```
 
@@ -68,7 +70,9 @@ or submit a pull request.
 
 ## Acknowledgments
 
-- [regex.toml](https://github.com/ihrishikesh0896/SecretSanitizer/blob/main/configs/regex.toml) of this project are adapted from [gitleaks](https://github.com/zricethezav/gitleaks/blob/master/CONTRIBUTING.md) by [zricethezav](https://github.com/zricethezav). The code is used under [MIT License](LICENSE).
+- [regex.toml](https://github.com/ihrishikesh0896/SecretSanitizer/blob/main/configs/regex.toml) of this project are
+  adapted from [gitleaks](https://github.com/zricethezav/gitleaks/blob/master/CONTRIBUTING.md)
+  by [zricethezav](https://github.com/zricethezav). The code is used under [MIT License](LICENSE).
 
 ## License
 
