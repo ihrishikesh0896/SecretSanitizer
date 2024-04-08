@@ -121,7 +121,7 @@ def main(urls, workspace_dir, action_mode):
 
 
 
-config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
+config_file = 'configs/regex.toml'
 
 
 def load_rules_from_config(config_file):
