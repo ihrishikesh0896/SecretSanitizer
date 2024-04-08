@@ -1,0 +1,39 @@
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/secrets_replacement_log.csv
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/logs/application.log
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/vulnerable-springboot-dum-app/logs/application.log on line 2
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/src/main/resources/application.properties
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/vulnerable-springboot-dum-app/src/main/resources/application.properties on line 3
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/vulnerable-springboot-dum-app/src/main/resources/application.properties on line 4
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/src/main/resources/db/database.sql
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/src/main/java/com/dummy/DatabaseConfig.java
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/vulnerable-springboot-dum-app/src/main/java/com/dummy/DatabaseConfig.java on line 7
+INFO:root:Searching file: ../WORKSPACE/vulnerable-springboot-dum-app/src/main/java/com/dummy/Application.java
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/README.md
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/secrets_replacement_log.csv
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/books/test-script/main.txt
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/books/test-script/main.py
+CRITICAL:root:Match found for rule | slack-webhook-url in ../WORKSPACE/crawler.ai/books/test-script/main.py on line 14
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-github.py
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-github.py on line 25
+CRITICAL:root:no such group | Rule match error | in ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-github.py on line 25
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-gitlab.py
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-gitlab.py on line 24
+CRITICAL:root:no such group | Rule match error | in ../WORKSPACE/crawler.ai/scripts/crawler-tiaa-gitlab.py on line 24
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/data/test.csv
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/data/gitlab.csv
+INFO:root:Searching file: ../WORKSPACE/crawler.ai/data/github.csv
+INFO:root:Searching file: ../WORKSPACE/dummy-java-project/README.md
+INFO:root:Searching file: ../WORKSPACE/dummy-java-project/secrets_replacement_log.csv
+INFO:root:Searching file: ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/resources/application.properties
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/resources/application.properties on line 3
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/resources/application.properties on line 4
+INFO:root:Searching file: ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/java/com/example/MainApp.java
+INFO:root:Searching file: ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/java/com/example/Config.java
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/dummy-java-project/dummy-java-project/src/main/java/com/example/Config.java on line 4
+INFO:root:Searching file: ../WORKSPACE/secret_store/README.md
+INFO:root:Searching file: ../WORKSPACE/secret_store/secrets_replacement_log.csv
+INFO:root:Searching file: ../WORKSPACE/secret_store/dummy.py
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/secret_store/dummy.py on line 7
+CRITICAL:root:Match found for rule | generic-api-key in ../WORKSPACE/secret_store/dummy.py on line 20
+INFO:root:Process completed for repository: https://github.com/ihrishikesh0896/crawler.ai.git
+INFO:root:---------------------------------------------------------------

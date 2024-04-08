@@ -94,7 +94,6 @@ class GitPackage:
         # Check if there are changes to commit
         if repo.is_dirty(untracked_files=True):
             new_branch_name = self.get_next_branch_name()
-            print(new_branch_name)
             repo.git.checkout('HEAD', b=new_branch_name)
             repo.git.add(A=True)  # Stages all changes, including untracked files
             repo.git.commit(m='Replace secrets with placeholder values')
@@ -103,19 +102,23 @@ class GitPackage:
             logging.info("No changes to commit, working tree clean.")
 
 
-def main(urls, workspace_dir):
+def main(urls, workspace_dir, action_mode):
     logging.basicConfig(level=logging.INFO)
     for url in urls:
         git_package = GitPackage(url, workspace_dir)
         git_package.clone_repo()
         repository_path = git_package.repository_path()
+
+        # Ensure action_mode is properly passed and used in the script
         rules = load_rules_from_config(config_file)
-        apply_rules_to_repo(workspace_dir, rules, repository_path)
-        # scanner = SecretScannerInhouse(SECRET_PATTERNS, PLACEHOLDER_FORMAT, OUTPUT_MAPPING_FILE)
-        # SecretScannerInhouse.process_directory(git_package.repo_path, scanner)
-        git_package.commit_changes()
-        logging.info("Secrets replacement and commit completed for repository: " + url)
+        apply_rules_to_repo(workspace_dir, rules, repository_path, action_mode)
+
+        if action_mode == 'update':
+            git_package.commit_changes()
+
+        logging.info(f"Process completed for repository: {url}")
         logging.info("---------------------------------------------------------------")
+
 
 
 config_file = '/Users/hrishikesh/Desktop/github_projects/secret-pusher/configs/regex.toml'
@@ -132,20 +135,21 @@ def load_rules_from_config(config_file):
 
 
 def display_usage():
-    print("Usage: python main.py -urls <git url> -workspace-dir </path/to/repository>")
+    print("Usage: python main.py -urls <git url> -workspace-dir </path/to/repository> -action_mode <mode>")
     print("-workspace-dir: Path to the repository where rules will be applied.")
-    print("-urls : Input Urls not supplied")
+    print("-urls: Input URLs not supplied")
+    print("-action_mode: 'update' to replace secrets and commit changes, 'log' to only log the findings")
+
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:  # The first argument is the script name, so we expect 3 in total
-        display_usage()
-        sys.exit(1)
     parser = argparse.ArgumentParser(description="Scan and replace secrets in git repositories.")
-    parser.add_argument('-urls', type=lambda s: s.split(','), help='URL(s) of the git repositories to process- comma-separated values [ex: url1,url2,...]')
-    parser.add_argument('-workspace-dir', type=str, default='../WORKSPACE',
-                        help='Directory where repositories will be cloned and processed.')
+    parser.add_argument('-urls', type=lambda s: s.split(','), help='URL(s) of the git repositories to process - comma-separated values [ex: url1,url2,...]')
+    parser.add_argument('-workspace_dir', type=str, default='../WORKSPACE', help='Directory where repositories will be cloned and processed.')
+    parser.add_argument('-action_mode', type=str, choices=['update', 'log'], default='log', help='Mode of operation: "update" to modify files, "log" to only log findings')
+
     args = parser.parse_args()
     urls = args.urls
     workspace_dir = args.workspace_dir
-    main(urls, workspace_dir)
+    action_mode = args.action_mode
+    main(urls, workspace_dir, action_mode)
